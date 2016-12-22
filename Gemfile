@@ -9,6 +9,7 @@ gem 'autoprefixer-rails'
 gem 'chewy', git: 'https://github.com/toptal/chewy.git', ref: '4ae2065e9204d39f8ab16df9e6b6b6b187220f87'
 
 gem 'faraday-http-cache'
+gem 'faraday_middleware'
 gem 'flipper'
 gem 'flipper-redis'
 gem 'flipper-ui'
@@ -50,6 +51,7 @@ gem 'sass-rails', '~> 5.0', '>= 5.0.6'
 gem 'sidekiq', '~> 4.2', '>= 4.2.7'
 
 gem 'turbolinks', '~> 2.5.3'
+gem 'typhoeus'
 
 gem 'uglifier', '>= 1.3.0'
 
