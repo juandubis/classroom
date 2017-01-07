@@ -18,37 +18,7 @@ If you're interested in helping out with Classroom development and looking for a
 ### Get started
 New to Ruby? No worries! You can follow these instructions to install a local server.
 
-#### Installing a Local Server
-
-First things first, you'll need to install Ruby 2.3.3. We recommend using the excellent [rbenv](https://github.com/sstephenson/rbenv),
-and [ruby-build](https://github.com/sstephenson/ruby-build)
-
-```bash
-rbenv install 2.3.3
-rbenv global 2.3.3
-```
-
-Next, you'll need to make sure that you have Nodejs, PostgreSQL, Redis, Memcached, and Elasticsearch installed. This can be done easily :
-* For OSX using [Homebrew](http://brew.sh) : You don't have to do anything! When you run `script/setup` later on this will be taken care of for you.
-* For Linux : `apt-get install nodejs postgresql redis-server memcached`. For Elasticsearch, follow the instructions on [their website](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html).
-
-You will want to set PostgreSQL to autostart at login via launchctl, if not already. See `brew info postgresql`. Redis and memcached may be setup similarly via launchctl or setup project wide by using foreman, described below.
-
-Now, let's install the gems from the `Gemfile` ("Gems" are synonymous with libraries in other
-languages).
-
-```bash
-gem install bundler && rbenv rehash
-```
-
 ### Setup GitHub Classroom
-
-If you are using Linux, configure PostgreSQL :
-
-* Edit `/etc/postgresql/9.3/main/postgresql.conf` and uncomment `#unix_socket_permissions = 0777`
-* Create a user and give him the rights to create a database : `su postgres -s /bin/bash -c "psql -c 'CREATE USER classroom_user; ALTER USER classroom_user CREATEDB'"` (Change `classroom_user` to the username that will run the classroom server)
-
-Once bundler is installed (and PostgreSQL correctly configured for Linux users) go ahead and run the `setup` script :
 
 ```
 script/setup

@@ -30,12 +30,21 @@
       "description": "The GitHub Application Client Secret.",
       "required": true
     },
+    "RAILS_MAX_THREADS": {
+      "value": 5,
+      "required": true
+    }
     "REDIS_PROVIDER": {
-      "value": "REDIS_URL"
+      "value": "REDIS_URL",
+      "required": true
     },
     "NON_STAFF_GITHUB_ADMIN_IDS": {
       "description": "GitHub IDs of non GitHub staff members that have staff access.",
       "required": false
+    },
+    "WEBHOOK_SECRET": {
+      "description": "Key used to verify a GitHub webhook payload",
+      "required": true
     }
   },
 

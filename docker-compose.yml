@@ -1,0 +1,89 @@
+version: '2'
+services:
+  elasticsearch:
+    image: 'elasticsearch:1.7'
+
+  memcached:
+    image: 'memcached:1.4'
+
+  database:
+    image: 'postgres:9.4'
+    environment:
+      POSTGRES_USER: 'classroom_user'
+      POSTGRES_PASSWORD: 'classroom_password'
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+
+  redis:
+    image: 'redis:3.2-alpine'
+    command: redis-server
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis:/var/lib/redis/data'
+
+  classroom:
+    depends_on:
+      - 'elasticsearch'
+      - 'memcached'
+      - 'postgres'
+      - 'redis'
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: rails server -b 0.0.0.0
+    ports:
+      - '5000:5000'
+    links:
+      - elasticsearch:elasticsearch.service.classroom.internal
+      - memcached:memcached.service.classroom.internal
+    environment:
+      # Development
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - CLASSROOM_WEBHOOK_URL_PREFIX=${CLASSROOM_WEBHOOK_URL_PREFIX}
+      - NON_STAFF_GITHUB_ADMIN_IDS=${NON_STAFF_GITHUB_ADMIN_IDS}
+      - MOTD=${MOTD}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      # Testing
+      - TEST_CLASSROOM_OWNER_GITHUB_ID=${TEST_CLASSROOM_OWNER_GITHUB_ID}
+      - TEST_CLASSROOM_OWNER_GITHUB_TOKEN=${TEST_CLASSROOM_OWNER_GITHUB_TOKEN}
+      - TEST_CLASSROOM_STUDENT_GITHUB_ID=${TEST_CLASSROOM_STUDENT_GITHUB_ID}
+      - TEST_CLASSROOM_STUDENT_GITHUB_TOKEN=${TEST_CLASSROOM_STUDENT_GITHUB_TOKEN}
+      - TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_ID=${TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_ID}
+      - TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_LOGIN=${TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_LOGIN}
+
+  sidekiq:
+    depends_on:
+      - 'elasticsearch'
+      - 'database'
+      - 'redis'
+      - 'memcached'
+    build: .
+      context: ./
+      dockerfile: Dockerfile
+    command: sidekiq -C config/sidekiq.yml
+    links:
+      - elasticsearch:elasticsearch.service.classroom.internal
+      - memcached:memcached.service.classroom.internal
+    environment:
+      # Development
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - CLASSROOM_WEBHOOK_URL_PREFIX=${CLASSROOM_WEBHOOK_URL_PREFIX}
+      - NON_STAFF_GITHUB_ADMIN_IDS=${NON_STAFF_GITHUB_ADMIN_IDS}
+      - MOTD=${MOTD}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      # Testing
+      - TEST_CLASSROOM_OWNER_GITHUB_ID=${TEST_CLASSROOM_OWNER_GITHUB_ID}
+      - TEST_CLASSROOM_OWNER_GITHUB_TOKEN=${TEST_CLASSROOM_OWNER_GITHUB_TOKEN}
+      - TEST_CLASSROOM_STUDENT_GITHUB_ID=${TEST_CLASSROOM_STUDENT_GITHUB_ID}
+      - TEST_CLASSROOM_STUDENT_GITHUB_TOKEN=${TEST_CLASSROOM_STUDENT_GITHUB_TOKEN}
+      - TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_ID=${TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_ID}
+      - TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_LOGIN=${TEST_CLASSROOM_OWNER_ORGANIZATION_GITHUB_LOGIN}
+
+volumes:
+  redis:
+  postgres:

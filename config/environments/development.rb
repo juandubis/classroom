@@ -16,7 +16,16 @@ Rails.application.configure do
   if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
 
-    config.cache_store = :memory_store
+    memcachedcloud_servers = ENV['MEMCACHEDCLOUD_SERVERS'].split(',')
+
+    dalli_store_config = {
+      namespace:  'CLASSROOM_DEVELOPMENT',
+      expires_in: (ENV['REQUEST_CACHE_TIMEOUT'] || 30).to_i.minutes,
+      pool_size:  5
+    }
+
+    config.cache_store = :dalli_store, memcachedcloud_servers, dalli_store_config
+
     config.public_file_server.headers = {
       'Cache-Control' => 'public, max-age=172800'
     }
